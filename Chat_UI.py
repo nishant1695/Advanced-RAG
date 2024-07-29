@@ -13,6 +13,7 @@ from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 from openai import OpenAI
 from openai import OpenAIError, AuthenticationError
+from openai.callbacks import StreamingStdOutCallbackHandler
 
 
 __import__('pysqlite3') 
