@@ -187,7 +187,7 @@ with st.sidebar:
                 st.sidebar.success('API key validated!', icon='✅')
                 os.environ['OPENAI_API_KEY'] = api_key
                 embd = OpenAIEmbeddings()
-                model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()], temperature=0, model="gpt-3.5-turbo")
+                model = OpenAI(temperature=0, model="gpt-3.5-turbo")
             else:
                 st.sidebar.error('Invalid API key!', icon='⚠️')
         else:
