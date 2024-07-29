@@ -12,7 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 load_dotenv()
-api_key = ''
+api_key = st.secrets["api_key"]
 #################################################################################################################    
 ##################################   Util Functions   ###########################################################
 #################################################################################################################
