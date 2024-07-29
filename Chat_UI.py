@@ -12,7 +12,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 from openai import OpenAI
-from openai.error import AuthenticationError
+from openai import OpenAIError, AuthenticationError
+
 
 __import__('pysqlite3') 
 import sys 
