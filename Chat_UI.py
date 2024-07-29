@@ -17,7 +17,7 @@ api_key = ''
 ##################################   Util Functions   ###########################################################
 #################################################################################################################
 load_dotenv()
-api_key = ''
+#api_key = ''
 class CapturePrints:
     def __init__(self, log_callback=None):
         self.log_callback = log_callback
@@ -172,15 +172,17 @@ with st.sidebar:
     if llm_type == 'API':
         api_key = st.sidebar.text_input('Enter API key:', type='password', key='api_key')
         # Check if the API key is valid
-        api_key_valid = validate_openai_api_key(api_key)
-        
-        if api_key_valid:
-            st.sidebar.success('API key validated!', icon='✅')
-            os.environ['OPENAI_API _KEY'] = api_key
-            embd = OpenAIEmbeddings()
-            model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-3.5-turbo")
+        if api_key:
+            api_key_valid = validate_openai_api_key(api_key)
+            if api_key_valid:
+                st.sidebar.success('API key validated!', icon='✅')
+                os.environ['OPENAI_API_KEY'] = api_key
+                embd = OpenAIEmbeddings()
+                model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()], temperature=0, model="gpt-3.5-turbo")
+            else:
+                st.sidebar.error('Invalid API key!', icon='⚠️')
         else:
-            st.sidebar.error('Invalid API key!', icon='⚠️')
+            st.sidebar.warning('Please enter an API key', icon='⚠️')
     elif llm_type == 'Local':
         list_response = ollama.list()
         # Extract the 'name' field from each model's details
