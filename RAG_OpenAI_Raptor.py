@@ -8,7 +8,7 @@ from RAPTOR import *
 from AnyFile_Loader import *
 from langchain_community.chat_models import ChatOllama
 
-#os.environ[''] = '' # OpenAI API Key
+os.environ['OPENAI_API_KEY'] = st.secrets["api_key"] # OpenAI API Key
 embd = OpenAIEmbeddings()
 model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
 
