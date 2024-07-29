@@ -14,4 +14,3 @@ matplotlib
 ollama
 streamlit
 pysqlite3-binary
-openai
