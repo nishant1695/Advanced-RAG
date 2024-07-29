@@ -11,6 +11,10 @@ from langchain_openai import OpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
+
+__import__('pysqlite3') 
+import sys 
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 load_dotenv()
 api_key = st.secrets["api_key"]
 #################################################################################################################    
