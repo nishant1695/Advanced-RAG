@@ -161,10 +161,8 @@ def validate_openai_api_key(api_key: str) -> bool:
     try:
         client.models.list()
         return True
-    except AuthenticationError:
-        return False
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"An unexpected authentication error occurred: {e}")
         return False
 
 #################################################################################################################    
