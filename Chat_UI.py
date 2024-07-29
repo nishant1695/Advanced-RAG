@@ -4,13 +4,13 @@ import streamlit as st
 import os
 import io
 import sys
+import openai
 import ollama
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_openai import OpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
-from langchain_openai import OpenAIError, AuthenticationError
 
 
 __import__('pysqlite3') 
