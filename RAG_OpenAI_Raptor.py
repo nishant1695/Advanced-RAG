@@ -7,6 +7,7 @@ from langchain_core.runnables import RunnablePassthrough
 from RAPTOR import *
 from AnyFile_Loader import *
 from langchain_community.chat_models import ChatOllama
+import streamlit as st
 
 os.environ['OPENAI_API_KEY'] = st.secrets["api_key"] # OpenAI API Key
 embd = OpenAIEmbeddings()
