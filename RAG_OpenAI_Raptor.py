@@ -8,6 +8,10 @@ from RAPTOR import *
 from AnyFile_Loader import *
 from langchain_community.chat_models import ChatOllama
 
+__import__('pysqlite3') 
+import sys 
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings()
 model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
