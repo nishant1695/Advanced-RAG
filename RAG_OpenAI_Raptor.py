@@ -14,7 +14,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings()
-model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     # Define the embedding function
     embd = OpenAIEmbeddings()
-    model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+    model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
     source_directory = os.environ.get('SOURCE_DIRECTORY', 'Melanoma_Papers')
     vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
 
