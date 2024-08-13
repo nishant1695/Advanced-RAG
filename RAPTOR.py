@@ -28,7 +28,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 # os.environ[] =  # OpenAI API Key
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings()
-model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
 def global_cluster_embeddings(
     embeddings: np.ndarray,
