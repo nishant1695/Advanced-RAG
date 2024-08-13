@@ -1,17 +1,12 @@
 RANDOM_SEED = 224  # Fixed seed for reproducibility
 
-
+import streamlit as st
 ### --- Code from citations referenced above (added comments and docstrings) --- ###
 # General utility and data handling
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 import os
-import streamlit as st
-
-__import__('pysqlite3') 
-import sys 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # UMAP for dimensionality reduction
 import umap
@@ -27,7 +22,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 
 # os.environ[] =  # OpenAI API Key
-os.environ['OPENAI_API_KEY'] = st.secrets["api_key"] # OpenAI API Key
+os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings()
 model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
 

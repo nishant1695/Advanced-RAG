@@ -7,13 +7,8 @@ from langchain_core.runnables import RunnablePassthrough
 from RAPTOR import *
 from AnyFile_Loader import *
 from langchain_community.chat_models import ChatOllama
-import streamlit as st
 
-__import__('pysqlite3') 
-import sys 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
-os.environ['OPENAI_API_KEY'] = st.secrets["api_key"] # OpenAI API Key
+os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings()
 model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
 
@@ -125,12 +120,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process and query documents using a vectorstore.')
     parser.add_argument('--update', action='store_true', help='Flag to update the vectorstore (default action)')
     parser.add_argument('--no-update', dest='update', action='store_false', help='Flag to not update the vectorstore and load from existing path')
-    parser.add_argument('--api-key', type=str, required=True, help='OpenAI API Key')
     parser.set_defaults(update=True)
 
     args = parser.parse_args()
 
-    os.environ['OPENAI_API_KEY'] = args.api_key
     # Define the embedding function
     embd = OpenAIEmbeddings()
     model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
