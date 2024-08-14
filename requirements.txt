@@ -1,0 +1,16 @@
+langchain
+umap-learn
+scikit-learn
+langchain_community
+tiktoken
+langchain-openai
+langchainhub
+chromadb
+langchain-anthropic
+PyMuPDF==1.23.5
+pandas
+Numpy
+matplotlib
+ollama
+streamlit
+pysqlite3-binary
