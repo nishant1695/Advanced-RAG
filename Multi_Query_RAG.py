@@ -9,18 +9,19 @@ from AnyFile_Loader import *
 from langchain_community.chat_models import ChatOllama
 from operator import itemgetter
 from langchain.load import dumps, loads
+import streamlit as st
 
 os.environ['LANGCHAIN_TRACING_V2'] = 'true'
 os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
 
 #langsmith API key
-os.environ['LANGCHAIN_API_KEY'] = ''
+os.environ['LANGCHAIN_API_KEY'] = st.secrets["langsmith_api_key"]
 # this is optional, before using this line, create a project with this name in the langsmith
-os.environ['LANGCHAIN_PROJECT']=''
+os.environ['LANGCHAIN_PROJECT']= st.secrets["langsmith_project"]
 
-os.environ['OPENAI_API_KEY'] = ''  # Ensure this is set securely
+os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final  # Ensure this is set securely
 embd = OpenAIEmbeddings()
-model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
@@ -172,7 +173,7 @@ if __name__ == "__main__":
 
     # Define the embedding function
     embd = OpenAIEmbeddings()
-    model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+    model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
     source_directory = os.environ.get('SOURCE_DIRECTORY', 'Melanoma_Papers')
     vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
 
