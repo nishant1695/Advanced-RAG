@@ -1,6 +1,6 @@
 RANDOM_SEED = 224  # Fixed seed for reproducibility
 
-import streamlit as st
+
 ### --- Code from citations referenced above (added comments and docstrings) --- ###
 # General utility and data handling
 from typing import Dict, List, Optional, Tuple
@@ -15,18 +15,14 @@ import umap
 from sklearn.mixture import GaussianMixture
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
+import streamlit as st
 
 # Initialize the embeddings and model
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 
-__import__('pysqlite3') 
-import sys 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
 # os.environ[] =  # OpenAI API Key
-os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
+os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final # OpenAI API Key
 embd = OpenAIEmbeddings()
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
