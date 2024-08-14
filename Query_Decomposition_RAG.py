@@ -10,6 +10,10 @@ from langchain_community.chat_models import ChatOllama
 from operator import itemgetter
 from langchain.load import dumps, loads
 
+__import__('pysqlite3') 
+import sys 
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 os.environ['LANGCHAIN_TRACING_V2'] = 'true'
 os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
 
