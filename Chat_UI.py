@@ -1,86 +1,26 @@
+from AnyFile_Loader import *
+from RAG_OpenAI_Raptor import *
 import streamlit as st
-# App title
-st.set_page_config(page_title="Document Query Interface")
-import openai
 import os
 import io
 import sys
+import openai
 import ollama
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain_openai import OpenAI, OpenAIEmbeddings
+from langchain_openai import OpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
+import json
+from langchain.docstore.document import Document
+
 load_dotenv()
-__import__('pysqlite3') 
-import sys 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
-def validate_openai_api_key(api_key: str) -> bool:
-    """
-    Validates the OpenAI API key by attempting to list the available models.
-
-    Args:
-    api_key (str): The OpenAI API key to validate.
-
-    Returns:
-    bool: True if the API key is valid, False otherwise.
-    """
-    client = openai.OpenAI(api_key=api_key)
-    try:
-        client.models.list()
-    except openai.APIConnectionError:
-        return False
-    except Exception as e:
-        return False
-    else:
-        return True
-
-with st.sidebar:
-    st.title('Document Query Interface')
-
-    llm_type = st.sidebar.radio("Choose LLM Type", ['API', 'Local'])
-
-    if llm_type == 'API':
-        api_key = st.sidebar.text_input('Enter API key:', type='password', key='api_key')
-
-        if api_key:
-
-            # Check if the API key is valid
-            api_key_valid = validate_openai_api_key(api_key)
-        
-            if api_key_valid:
-                st.sidebar.success('API key validated!', icon='✅')
-                st.session_state.api_key_final = api_key
-                print("API Key is: ",st.session_state.api_key_final)
-                os.environ['OPENAI_API_KEY'] = api_key
-                embd = OpenAIEmbeddings(openai_api_key=api_key)
-                model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-4o-mini")
-            else:
-                st.sidebar.error('Invalid API key!', icon='⚠️')
-                st.stop()
-        else:
-            st.warning("Please enter your OpenAI API key to continue.")
-            st.stop()
-            
-    elif llm_type == 'Local':
-        list_response = ollama.list()
-        # Extract the 'name' field from each model's details
-        pulled_models = [model['name'] for model in list_response['models']]
-        selected_model = st.sidebar.selectbox('Select a Model', list(reversed(pulled_models)))
-
-
-from AnyFile_Loader import *
-from RAG_OpenAI_Raptor import *
-from RAG_OpenAI_Raptor import load_vectorstore, setup_language_model_chain
-
-
-api_key = st.session_state.api_key_final
-os.environ['OPENAI_API _KEY'] = api_key
+api_key = ''
 #################################################################################################################    
 ##################################   Util Functions   ###########################################################
 #################################################################################################################
 load_dotenv()
+api_key = ''
 class CapturePrints:
     def __init__(self, log_callback=None):
         self.log_callback = log_callback
@@ -102,12 +42,14 @@ if 'log' not in st.session_state:
 def update_log(message):
     st.session_state.log += message
 
-
+# App title
+st.set_page_config(page_title="Document Query Interface")
+"""
 def extract_pages(source_directory: str):
-    """ Extracts pages from documents located in the specified directory using the load_documents function.
+     Extracts pages from documents located in the specified directory using the load_documents function.
         Args: source_directory (str): The directory containing the files to be processed.
         Returns:list: A list of strings, each representing the content of a page from the extracted documents.
-    """
+    
     print("="*30)
     print(f">>>Extracting from: {source_directory}")
 
@@ -120,6 +62,34 @@ def extract_pages(source_directory: str):
     # Extract page content from each document
     extracted_pages = [doc.page_content for doc in documents]
     print(f">>>Extracted {len(extracted_pages)} pages.")
+    print("="*30)
+    return documents
+"""
+
+def extract_pages(source_file: str):
+    """ Extracts pages from a JSON file.
+        Args: source_file (str): The path to the JSON file to be processed.
+        Returns: list: A list of Document objects, each representing the content of a page from the JSON file.
+    """
+    print("="*30)
+    print(f">>>Extracting from: {source_file}")
+
+    try:
+        with open(source_file, 'r') as file:
+            data = json.load(file)
+    except json.JSONDecodeError:
+        print("Invalid JSON file.")
+        return []
+    except FileNotFoundError:
+        print("File not found.")
+        return []
+
+    documents = []
+    for key, value in data.items():
+        doc = Document(page_content=value, metadata={"source": key})
+        documents.append(doc)
+
+    print(f">>>Extracted {len(documents)} pages.")
     print("="*30)
     return documents
 
@@ -201,19 +171,61 @@ def create_summary_tree(documents: List[str], chunk_size: int, chunk_overlap: in
     print("="*30)
     return all_texts
 
+
+
+def validate_openai_api_key(api_key: str) -> bool:
+    """
+    Validates the OpenAI API key by attempting to list the available models.
+
+    Args:
+    api_key (str): The OpenAI API key to validate.
+
+    Returns:
+    bool: True if the API key is valid, False otherwise.
+    """
+    client = openai.OpenAI(api_key=api_key)
+    try:
+        client.models.list()
+    except openai.APIConnectionError:
+        return False
+    else:
+        return True
+
 #################################################################################################################    
 ##################################   Side Bar Interface    ######################################################
 #################################################################################################################
 
 with st.sidebar:
+    st.title('Document Query Interface')
+
+    llm_type = st.sidebar.radio("Choose LLM Type", ['API', 'Local'])
+
+    if llm_type == 'API':
+        api_key = st.sidebar.text_input('Enter API key:', type='password', key='api_key')
+        # Check if the API key is valid
+        api_key_valid = validate_openai_api_key(api_key)
+        
+        if api_key_valid:
+            st.sidebar.success('API key validated!', icon='✅')
+            os.environ['OPENAI_API _KEY'] = api_key
+            embd = OpenAIEmbeddings()
+            model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-3.5-turbo")
+        else:
+            st.sidebar.error('Invalid API key!', icon='⚠️')
+    elif llm_type == 'Local':
+        list_response = ollama.list()
+        # Extract the 'name' field from each model's details
+        pulled_models = [model['name'] for model in list_response['models']]
+        selected_model = st.sidebar.selectbox('Select a Model', list(reversed(pulled_models)))
     # Document Update and Processing Section
     st.markdown('---')
     st.subheader('Document Processing')
     update_enabled = st.checkbox("Update Documents", key='update_documents')
 
     if update_enabled:
-        source_directory = st.text_input("Directory path containing PDFs:")
-        if st.button("Load Documents"):
+        source_directory = st.text_input("Path to JSON file:")
+        #source_directory = st.text_input("Directory path containing PDFs:")
+        if st.button("Load Document"):
             if not os.path.exists(source_directory):
                 st.error("Invalid directory path!")
             else:
@@ -358,4 +370,3 @@ if not disable_chat:
             
         message = {"role": "assistant", "content": full_response}
         st.session_state.messages.append(message)
-
