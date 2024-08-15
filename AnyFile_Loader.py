@@ -15,6 +15,7 @@ from langchain_community.document_loaders import (
     UnstructuredODTLoader,
     UnstructuredPowerPointLoader,
     UnstructuredWordDocumentLoader,
+    JSONLoader
 )
 
 # Define custom loader mapping with file extensions and corresponding loader classes
@@ -32,6 +33,7 @@ LOADER_MAPPING = {
     ".ppt": (UnstructuredPowerPointLoader, {}),
     ".pptx": (UnstructuredPowerPointLoader, {}),
     ".txt": (TextLoader, {"encoding": "utf8"}),
+    ".json": (JSONLoader, {"jq_schema": ".", "text_content": False}),
 }
 
 def load_single_document(file_path: str) -> List[Document]:
