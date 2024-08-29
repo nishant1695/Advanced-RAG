@@ -21,6 +21,10 @@ st.set_page_config(page_title="Document Query Interface")
 
 load_dotenv()
 
+__import__('pysqlite3') 
+import sys 
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 def validate_openai_api_key(api_key: str) -> bool:
     client = openai.OpenAI(api_key=api_key)
     try:
