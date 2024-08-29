@@ -13,5 +13,5 @@ Numpy
 matplotlib
 ollama
 streamlit
-#pysqlite3-binary
+pysqlite3-binary
 document
