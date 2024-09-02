@@ -31,6 +31,8 @@ def validate_openai_api_key(api_key: str) -> bool:
         client.models.list()
     except openai.APIConnectionError:
         return False
+    except Exception as e:
+        return False
     else:
         return True
 
