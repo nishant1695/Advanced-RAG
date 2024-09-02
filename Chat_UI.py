@@ -6,7 +6,6 @@ import os
 import io
 import sys
 import ollama
-import json
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_openai import OpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -101,12 +100,12 @@ if 'log' not in st.session_state:
 def update_log(message):
     st.session_state.log += message
 
-"""
+
 def extract_pages(source_directory: str):
-       Extracts pages from documents located in the specified directory using the load_documents function.
+    """ Extracts pages from documents located in the specified directory using the load_documents function.
         Args: source_directory (str): The directory containing the files to be processed.
         Returns:list: A list of strings, each representing the content of a page from the extracted documents.
-
+    """
     print("="*30)
     print(f">>>Extracting from: {source_directory}")
 
@@ -119,35 +118,6 @@ def extract_pages(source_directory: str):
     # Extract page content from each document
     extracted_pages = [doc.page_content for doc in documents]
     print(f">>>Extracted {len(extracted_pages)} pages.")
-    print("="*30)
-    return documents
-
-"""
-
-def extract_pages(source_file: str):
-    """ Extracts pages from a JSON file.
-        Args: source_file (str): The path to the JSON file to be processed.
-        Returns: list: A list of Document objects, each representing the content of a page from the JSON file.
-    """
-    print("="*30)
-    print(f">>>Extracting from: {source_file}")
-
-    try:
-        with open(source_file, 'r') as file:
-            data = json.load(file)
-    except json.JSONDecodeError:
-        print("Invalid JSON file.")
-        return []
-    except FileNotFoundError:
-        print("File not found.")
-        return []
-
-    documents = []
-    for key, value in data.items():
-        doc = Document(page_content=value, metadata={"source": key})
-        documents.append(doc)
-
-    print(f">>>Extracted {len(documents)} pages.")
     print("="*30)
     return documents
 
@@ -240,9 +210,8 @@ with st.sidebar:
     update_enabled = st.checkbox("Update Documents", key='update_documents')
 
     if update_enabled:
-        source_directory = st.text_input("Path to JSON file:")
-        #source_directory = st.text_input("Directory path containing PDFs:")
-        if st.button("Load Document"):
+        source_directory = st.text_input("Directory path containing PDFs:")
+        if st.button("Load Documents"):
             if not os.path.exists(source_directory):
                 st.error("Invalid directory path!")
             else:
