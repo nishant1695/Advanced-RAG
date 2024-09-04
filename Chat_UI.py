@@ -6,7 +6,7 @@ import sys
 import ollama
 import json
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain_openai import OpenAI, OpenAIEmbeddings
+from langchain_openai import OpenAI, OpenAIEmbeddings, ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
@@ -130,7 +130,7 @@ with st.sidebar:
                 st.session_state.api_key_final = api_key
                 os.environ['OPENAI_API_KEY'] = api_key
                 embd = OpenAIEmbeddings(openai_api_key=api_key)
-                model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-4-0613")
+                model = ChatOpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-4o-mini")
             else:
                 st.sidebar.error('Invalid API key!', icon='⚠️')
                 st.stop()
