@@ -90,7 +90,7 @@ prompt_decomposition = ChatPromptTemplate.from_template(template_qd)
 
 generate_queries = (
     prompt_decomposition 
-    | ChatOpenAI(temperature=0) 
+    | ChatOpenAI(temperature=0, model="gpt-4o-mini") 
     | StrOutputParser() 
     | (lambda x: x.split("\n"))
 )
