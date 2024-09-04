@@ -12,9 +12,10 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 load_dotenv()
-__import__('pysqlite3') 
-import sys 
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+#__import__('pysqlite3') 
+#import sys 
+#sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 def validate_openai_api_key(api_key: str) -> bool:
     """
