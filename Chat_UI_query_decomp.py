@@ -358,7 +358,7 @@ if not disable_chat:
                 Let's work this out step by step to ensure a thorough and well-structured answer.
                 """
                 prompt1 = ChatPromptTemplate.from_template(template)
-                model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+                model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
                 rag_results = []
                 for sub_question in questions:
                     retrieved_docs = retriever.get_relevant_documents(sub_question)
