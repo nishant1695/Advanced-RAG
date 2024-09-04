@@ -53,7 +53,7 @@ def setup_ollama_language_model_chain(vectorstore: Chroma, LLM_name: str, topk: 
                 Question: {question}
 
                 Start with a brief introduction to the topic, addressing the key elements of the question. Then, proceed with a detailed analysis, breaking down each component of the question into separate, well-thought-out points. Ensure that each point is supported by logical reasoning and relates back to the context provided. Conclude with a summary that synthesizes the findings and reflects on the implications or outcomes.
-
+                If the context doesn't contain relevant information, respond with: "I don't have enough information to answer this question.
                 Let's work this out step by step to ensure a thorough and well-structured answer.
                 """
     prompt = ChatPromptTemplate.from_template(template)
@@ -84,7 +84,7 @@ def setup_language_model_chain(vectorstore: Chroma, topk: int):
                 Question: {question}
 
                 Start with a brief introduction to the topic, addressing the key elements of the question. Then, proceed with a detailed analysis, breaking down each component of the question into separate, well-thought-out points. Ensure that each point is supported by logical reasoning and relates back to the context provided. Conclude with a summary that synthesizes the findings and reflects on the implications or outcomes.
-
+                If the context doesn't contain relevant information, respond with: "I don't have enough information to answer this question.
                 Let's work this out step by step to ensure a thorough and well-structured answer.
                 """
     prompt = ChatPromptTemplate.from_template(template)
