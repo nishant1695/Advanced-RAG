@@ -102,28 +102,6 @@ if 'log' not in st.session_state:
 def update_log(message):
     st.session_state.log += message
 
-"""
-def extract_pages(source_directory: str):
-       Extracts pages from documents located in the specified directory using the load_documents function.
-        Args: source_directory (str): The directory containing the files to be processed.
-        Returns:list: A list of strings, each representing the content of a page from the extracted documents.
-
-    print("="*30)
-    print(f">>>Extracting from: {source_directory}")
-
-    # Load documents using the function from AnyFile_loader.py
-    documents = load_documents(source_directory)
-    if not documents:
-        print("No documents found or loaded.")
-        return []
-
-    # Extract page content from each document
-    extracted_pages = [doc.page_content for doc in documents]
-    print(f">>>Extracted {len(extracted_pages)} pages.")
-    print("="*30)
-    return documents
-
-"""
 
 def extract_pages(source_file: str):
     """ Extracts pages from a JSON file.
