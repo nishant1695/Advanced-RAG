@@ -1,0 +1,2 @@
+Pre_stored_Vec_Store/* filter=lfs diff=lfs merge=lfs -text
+Vec_Store/* filter=lfs diff=lfs merge=lfs -text
