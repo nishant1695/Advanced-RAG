@@ -8,7 +8,6 @@ import json
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_openai import OpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 from typing import List
 from langchain.schema import Document
@@ -73,40 +72,19 @@ def extract_pages(source_file: str):
     print("="*30)
     return documents
 
-def process_batch(batch: List[Document], chunk_size: int, chunk_overlap: int):
-    print(f"Processing batch of {len(batch)} pages...")
+def process_all_documents(documents: List[Document], chunk_size: int, chunk_overlap: int):
+    print(f"Processing {len(documents)} documents...")
 
-    # Create and store embeddings
-    vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
     text_splitter = RecursiveCharacterTextSplitter(
         separators=["\n"],
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
         keep_separator=False,
     )
-    docs = text_splitter.split_documents(batch)
-    vectorstore = Chroma.from_documents(docs, embedding=embd, persist_directory=vectorstore_path)
+    docs = text_splitter.split_documents(documents)
+    vectorstore = Chroma.from_documents(docs, embedding=embd)
 
-    print("Batch processing complete.")
-    return vectorstore
-
-def process_all_documents(documents: List[Document], chunk_size: int, chunk_overlap: int):
-    batch_size = 6
-    total_pages = len(documents)
-    vectorstore = None
-    
-    for i in range(0, total_pages, batch_size):
-        batch = documents[i:i+batch_size]
-        batch_vectorstore = process_batch(batch, chunk_size, chunk_overlap)
-        
-        if vectorstore is None:
-            vectorstore = batch_vectorstore
-        else:
-            vectorstore.add_documents(batch)
-        
-        pages_processed = min(i + batch_size, total_pages)
-        update_log(f"{pages_processed} pages processed\n")
-    
+    print(f"Created {len(docs)} chunks.")
     return vectorstore
 
 # Sidebar
@@ -142,40 +120,32 @@ with st.sidebar:
     # Document Update and Processing Section
     st.markdown('---')
     st.subheader('Document Processing')
-    update_enabled = st.checkbox("Update Documents", key='update_documents')
-
-    if update_enabled:
-        source_directory = st.text_input("Path to JSON file:")
-        if st.button("Load Document"):
-            if not os.path.exists(source_directory):
-                st.error("Invalid file path!")
-            else:
-                with CapturePrints(log_callback=update_log):
-                    st.session_state.total_pages = extract_pages(source_directory)
-                st.success("Documents loaded successfully.")
-        
-        col1, col2 = st.columns([1,1])
-        with col1:
-            chunk_size = st.number_input("Chunk Size", min_value=100, max_value=1000, value=500, help='Size of text chunk for processing.')
-        with col2:
-            chunk_overlap = st.number_input("Chunk Overlap", min_value=0, max_value=100, value=50, help='Overlap size between chunks.')
-        
-        if st.button("Process Documents"):
-            if 'total_pages' not in st.session_state:
-                st.error("Please load the document first.")
-            else:
-                with CapturePrints(log_callback=update_log):
-                    st.session_state.vectorstore = process_all_documents(
-                        st.session_state.total_pages, chunk_size, chunk_overlap
-                    )
-                st.success("Document processing complete.")
-                st.success('VectorStore is Loaded')
-
-    else:
-        with CapturePrints(log_callback=update_log):
-            if 'vectorstore' not in st.session_state: 
-                st.session_state.vectorstore = Chroma(persist_directory="Pre_stored_Vec_Store", embedding_function=embd)
-        st.success('Pre-stored VectorStore is Loaded')
+    
+    source_directory = st.text_input("Path to JSON file:")
+    if st.button("Load Document"):
+        if not os.path.exists(source_directory):
+            st.error("Invalid file path!")
+        else:
+            with CapturePrints(log_callback=update_log):
+                st.session_state.total_pages = extract_pages(source_directory)
+            st.success("Documents loaded successfully.")
+    
+    col1, col2 = st.columns([1,1])
+    with col1:
+        chunk_size = st.number_input("Chunk Size", min_value=100, max_value=1000, value=500, help='Size of text chunk for processing.')
+    with col2:
+        chunk_overlap = st.number_input("Chunk Overlap", min_value=0, max_value=100, value=50, help='Overlap size between chunks.')
+    
+    if st.button("Process Documents"):
+        if 'total_pages' not in st.session_state:
+            st.error("Please load the document first.")
+        else:
+            with CapturePrints(log_callback=update_log):
+                st.session_state.vectorstore = process_all_documents(
+                    st.session_state.total_pages, chunk_size, chunk_overlap
+                )
+            st.success("Document processing complete.")
+            st.success('VectorStore is Created and Loaded')
 
     st.markdown('---')
     st.text_area("Log", st.session_state.log, height=300)
@@ -218,7 +188,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-disable_chat = not (llm_type == 'API' and api_key_valid or llm_type == 'Local' and selected_model)
+disable_chat = not (llm_type == 'API' and api_key_valid or llm_type == 'Local' and selected_model) or 'vectorstore' not in st.session_state
 
 if not disable_chat:
     if prompt := st.chat_input("Enter your question:", disabled=disable_chat):
@@ -254,4 +224,5 @@ if not disable_chat:
             
         message = {"role": "assistant", "content": response}
         st.session_state.messages.append(message)
-
+else:
+    st.warning("Please load and process a document before starting the chat.")
