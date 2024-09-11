@@ -1,7 +1,10 @@
 import argparse
 import os
+import json
 # LangChain Community and Hub components
-from langchain_community.vectorstores import Chroma
+from langchain.vectorstores import Pinecone
+from langchain_pinecone import PineconeVectorStore
+from pinecone import Pinecone
 from langchain import hub
 from langchain_core.runnables import RunnablePassthrough
 from RAPTOR import *
@@ -12,9 +15,16 @@ __import__('pysqlite3')
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
+os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
+
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
-embd = OpenAIEmbeddings()
+embd = OpenAIEmbeddings(model="text-embedding-ada-002")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+file_path = "Data/full_text_MicroSurgery.json"
+# Initialize Pinecone
+pc_api = st.secrets["PINECONE_API_KEY"]
+pinecone = Pinecone(api_key=pc_api)
+index_name = "microsurgery"
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
@@ -26,7 +36,7 @@ def process_documents(source_directory: str, ignored_files: List[str] = []) -> L
     print("="*30)
     return [text.replace("\n", " ") for text in texts]
 
-def build_vectorstore_with_summaries(texts: List[str], n_levels: int = 3) -> Chroma:
+def build_vectorstore_with_summaries(texts: List[str], n_levels: int = 3) -> PineconeVectorStore:
     print("="*30)
     print("Initiating vectorstore building with summaries...")
     raptor_results = recursive_embed_cluster_summarize(texts, level=1, n_levels=n_levels)
@@ -36,13 +46,14 @@ def build_vectorstore_with_summaries(texts: List[str], n_levels: int = 3) -> Chr
         summaries = raptor_results[level][1]["summaries"].tolist()
         all_texts.extend(summaries)
 
-    vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
-    vectorstore = Chroma.from_texts(texts=all_texts, embedding=embd, persist_directory=vectorstore_path)
+    #vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
+    #vectorstore = Chroma.from_texts(texts=all_texts, embedding=embd, persist_directory=vectorstore_path)
+    vectorstore = PineconeVectorStore.from_texts(texts=all_texts, embedding=embd, index_name=index_name)
     print("Vectorstore building completed.")
     print("="*30)
     return vectorstore
 
-def setup_ollama_language_model_chain(vectorstore: Chroma, LLM_name: str, topk: int):
+def setup_ollama_language_model_chain(vectorstore: PineconeVectorStore, LLM_name: str, topk: int):
     print(">>>chaining model:", LLM_name)
     retriever = vectorstore.as_retriever(search_kwargs={"k": topk})
     llm = ChatOllama(model=LLM_name, temperature=0)
@@ -73,10 +84,11 @@ def setup_ollama_language_model_chain(vectorstore: Chroma, LLM_name: str, topk: 
     return rag_chain
 
 
-def setup_language_model_chain(vectorstore: Chroma, topk: int):
+def setup_language_model_chain(vectorstore: PineconeVectorStore, topk: int):
     print(">>>Setting up LLM chain...")
     retriever = vectorstore.as_retriever(search_kwargs={"k": topk})
     print(topk)
+    print("Retreived:", retriever)
     template = """
                 Answer the question comprehensively and with detailed logical points based on the following context:
                 {context}
@@ -90,7 +102,10 @@ def setup_language_model_chain(vectorstore: Chroma, topk: int):
     prompt = ChatPromptTemplate.from_template(template)
 
     def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+        print([doc.page_content for doc in docs])
+        return "\n\n".join(data[doc.page_content] for doc in docs)
 
     rag_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
@@ -113,9 +128,10 @@ def invoke_chain(chain, question):
         print(f"Error during chain invocation: {e}")
         return "Error processing your request."
 
-def load_vectorstore(path: str, embedding_function) -> Chroma:
+def load_vectorstore(path: str, embedding_function) -> PineconeVectorStore:
     print(f">>>Loading vectorstore.")
-    vectorstore = Chroma(persist_directory=path, embedding_function=embedding_function)
+    #vectorstore = Chroma(persist_directory=path, embedding_function=embedding_function)
+    vectorstore = PineconeVectorStore.from_existing_index(index_name=index_name, embedding=embedding_function)
     print(">>>Vectorstore loaded.")
     print("="*30)
     return vectorstore
@@ -129,7 +145,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Define the embedding function
-    embd = OpenAIEmbeddings()
+    embd = OpenAIEmbeddings(model="text-embedding-ada-002")
     model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
     source_directory = os.environ.get('SOURCE_DIRECTORY', 'Melanoma_Papers')
     vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')

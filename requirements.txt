@@ -15,3 +15,5 @@ ollama
 streamlit
 pysqlite3-binary
 document
+pinecone
+langchain_pinecone

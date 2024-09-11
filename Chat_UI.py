@@ -6,15 +6,32 @@ import os
 import io
 import sys
 import ollama
+import json
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_openai import OpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 load_dotenv()
+from langchain.vectorstores import Pinecone
+from langchain_pinecone import PineconeVectorStore
+from pinecone import Pinecone
+
 __import__('pysqlite3') 
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
+
+file_path = "Data/full_text_MicroSurgery.json"
+
+with open(file_path, 'r') as file:
+    data = json.load(file)
+
+# Initialize Pinecone
+pinecone = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
+index_name = "microsurgery"
+print("Name is: ",index_name)
 
 def validate_openai_api_key(api_key: str) -> bool:
     """
@@ -153,7 +170,8 @@ def store_embeddings(documents: List[str], chunk_size: int, chunk_overlap: int, 
         keep_separator=False,
     )
     docs = text_splitter.split_documents(documents)
-    vectorstore = Chroma.from_documents(docs, embedding=embd, persist_directory=vectorstore_path)
+    #vectorstore = Chroma.from_documents(docs, embedding=embd, persist_directory=vectorstore_path)
+    vectorstore = PineconeVectorStore.from_documents(docs, embedding=embd, index_name=index_name)
     print(">>>Raw Embeddings stored.")
     print("="*30)
     return vectorstore
@@ -182,7 +200,8 @@ def create_store_embeddings(texts: List[str],documents: List[str], chunk_size: i
         keep_separator=False,
     )
     docs = text_splitter.split_documents(documents)
-    vectorstore = Chroma.from_documents(docs, embedding=embd, persist_directory=vectorstore_path)
+    #vectorstore = Chroma.from_documents(docs, embedding=embd, persist_directory=vectorstore_path)
+    vectorstore = PineconeVectorStore.from_documents(docs, embedding=embd, index_name=index_name)
     print(">>>Summary Embeddings stored.")
     print("="*30)
     return vectorstore
@@ -266,7 +285,8 @@ with st.sidebar:
     else:
         with CapturePrints(log_callback=update_log):
             if 'vectorstore' not in st.session_state: 
-                st.session_state.vectorstore = load_vectorstore("Pre_stored_Vec_Store", embd)
+                #st.session_state.vectorstore = load_vectorstore("Pre_stored_Vec_Store", embd)
+                st.session_state.vectorstore = load_vectorstore(index_name, embd)
         st.success('Pre-stored VectorStore is Loaded')
 
     st.markdown('---')
@@ -350,10 +370,10 @@ if not disable_chat:
                 docs = retriever.get_relevant_documents(prompt)
                 with st.expander("See Context"):
                     for doc in docs:
-                        st.write(doc.page_content)
-                        file_path = doc.metadata.get('file_path', None)
+                        st.write(data[doc.page_content])
+                        file_path = doc.page_content
                         if file_path:
-                            st.markdown(f"**File Path:** `{file_path}`")
+                            st.markdown(f"**File ID:** `{file_path}`")
                         else: 
                             st.markdown(f"**File Path:** `{'Raptor Cluster Summary File'}`")
                 response = invoke_chain(st.session_state.rag_chain, prompt)
