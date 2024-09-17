@@ -23,7 +23,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
-file_path = "Data/full_text_MicroSurgery.json"
+file_path = "Data/full_text_Craniofacial_Surgery.json"
 
 with open(file_path, 'r') as file:
     data = json.load(file)
