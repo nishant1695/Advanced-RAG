@@ -24,7 +24,7 @@ file_path = "Data/full_text_MicroSurgery.json"
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)
-index_name = "microsurgery"
+index_name = "craniofacial-surgery"
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
