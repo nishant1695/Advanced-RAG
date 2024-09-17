@@ -10,17 +10,29 @@ from langchain_core.runnables import RunnablePassthrough
 from RAPTOR import *
 from AnyFile_Loader import *
 from langchain_community.chat_models import ChatOllama
+import gdown
 
 __import__('pysqlite3') 
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+def download_file_from_drive(file_id, file_name):
+    #file_id = "your_file_id_here"  # Replace with actual Google Drive file ID
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output = "your_local_file_name.extension"  # Desired local file name
+
+    gdown.download(url, output, quiet=False)
+    return output
 
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings(model="text-embedding-ada-002")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
-file_path = "Data/full_text_Craniofacial_Surgery.json"
+file_id = "1TYSzSCXJKZlFKQrot2BxjCxWu-SkLVTy"
+file_name = "full_text_Craniofacial_Surgery.json"
+
+file_path = gdown.download(id=id, output=file_name)
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)

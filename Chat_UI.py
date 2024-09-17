@@ -16,6 +16,16 @@ load_dotenv()
 from langchain.vectorstores import Pinecone
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
+import gdown
+
+def download_file_from_drive(file_id, file_name):
+    #file_id = "your_file_id_here"  # Replace with actual Google Drive file ID
+    url = f"https://drive.google.com/uc?id={file_id}"
+    output = "your_local_file_name.extension"  # Desired local file name
+
+    gdown.download(url, output, quiet=False)
+    return output
+
 
 __import__('pysqlite3') 
 import sys 
@@ -23,7 +33,10 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
-file_path = "Data/full_text_Craniofacial_Surgery.json"
+file_id = "1TYSzSCXJKZlFKQrot2BxjCxWu-SkLVTy"
+file_name = "full_text_Craniofacial_Surgery.json"
+
+file_path = gdown.download(id=id, output=file_name)
 
 with open(file_path, 'r') as file:
     data = json.load(file)
