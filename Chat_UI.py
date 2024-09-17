@@ -34,7 +34,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
 file_path = "RAG Dataset/full_text_Craniofacial_Surgery.json"
-if os.path.isfile(file_path):
+if not os.path.isfile(file_path):
     url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
     gdown.download_folder(url)
 
