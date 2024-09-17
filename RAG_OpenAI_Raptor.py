@@ -29,10 +29,11 @@ os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings(model="text-embedding-ada-002")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
-url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
-gdown.download_folder(url)
+url = "https://drive.google.com/file/d/0B9P1L--7Wd2vNm9zMTJWOGxobkU/view?usp=sharing"
 
-file_path = "RAG Dataset/full_text_Craniofacial_Surgery.json"
+gdown.download(url=url, output="full_text_Craniofacial_Surgery.json", fuzzy=True)
+
+file_path = "full_text_Craniofacial_Surgery.json"
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)
