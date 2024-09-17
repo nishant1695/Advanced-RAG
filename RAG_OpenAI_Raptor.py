@@ -20,7 +20,7 @@ os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings(model="text-embedding-ada-002")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
-file_path = "Data/full_text_MicroSurgery.json"
+file_path = "Data/full_text_Craniofacial_Surgery.json"
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)
