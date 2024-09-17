@@ -33,10 +33,10 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
-file_id = "1TYSzSCXJKZlFKQrot2BxjCxWu-SkLVTy"
-file_name = "full_text_Craniofacial_Surgery.json"
+url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
+gdown.download_folder(url)
 
-file_path = gdown.download(id=id, output=file_name)
+file_path = "RAG Dataset/full_text_Craniofacial_Surgery.json"
 
 with open(file_path, 'r') as file:
     data = json.load(file)
