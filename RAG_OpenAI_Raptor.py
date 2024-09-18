@@ -16,28 +16,20 @@ __import__('pysqlite3')
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-def download_file_from_drive(file_id, file_name):
-    #file_id = "your_file_id_here"  # Replace with actual Google Drive file ID
-    url = f"https://drive.google.com/uc?id={file_id}"
-    output = "your_local_file_name.extension"  # Desired local file name
-
-    gdown.download(url, output, quiet=False)
-    return output
-
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings(model="text-embedding-ada-002")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
-file_path = "RAG Dataset/full_text_Craniofacial_Surgery.json"
+file_path = "RAG Dataset/full_text_Aesthetic_Surgery.json"
 if not os.path.isfile(file_path):
     url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
     gdown.download_folder(url)
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)
-index_name = "craniofacial-surgery"
+index_name = "aesthetic-surgery"
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
