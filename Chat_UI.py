@@ -18,15 +18,6 @@ from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
 import gdown
 
-def download_file_from_drive(file_id, file_name):
-    #file_id = "your_file_id_here"  # Replace with actual Google Drive file ID
-    url = f"https://drive.google.com/uc?id={file_id}"
-    output = "your_local_file_name.extension"  # Desired local file name
-
-    gdown.download(url, output, quiet=False)
-    return output
-
-
 __import__('pysqlite3') 
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')

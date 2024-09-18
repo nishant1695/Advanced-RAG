@@ -16,14 +16,6 @@ __import__('pysqlite3')
 import sys 
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-def download_file_from_drive(file_id, file_name):
-    #file_id = "your_file_id_here"  # Replace with actual Google Drive file ID
-    url = f"https://drive.google.com/uc?id={file_id}"
-    output = "your_local_file_name.extension"  # Desired local file name
-
-    gdown.download(url, output, quiet=False)
-    return output
-
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
