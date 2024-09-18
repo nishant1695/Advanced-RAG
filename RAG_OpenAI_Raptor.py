@@ -19,7 +19,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
-embd = OpenAIEmbeddings(model="text-embedding-ada-002")
+embd = OpenAIEmbeddings(model="text-embedding-3-small")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
 file_path = "RAG Dataset/full_text_Aesthetic_Surgery.json"
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Define the embedding function
-    embd = OpenAIEmbeddings(model="text-embedding-ada-002")
+    embd = OpenAIEmbeddings(model="text-embedding-3-small")
     model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
     source_directory = os.environ.get('SOURCE_DIRECTORY', 'Melanoma_Papers')
     vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
