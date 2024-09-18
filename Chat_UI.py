@@ -33,7 +33,7 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
-file_path = "RAG Dataset/full_text_Aesthetic_Surgery.json"
+file_path = "RAG Dataset/full_text_Pediatric_Plastic_Surgery.json"
 if not os.path.isfile(file_path):
     url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
     gdown.download_folder(url)
@@ -43,7 +43,7 @@ with open(file_path, 'r') as file:
 
 # Initialize Pinecone
 pinecone = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
-index_name = "aesthetic-surgery"
+index_name = "pediatric-plastic-surgery"
 print("Name is: ",index_name)
 
 def validate_openai_api_key(api_key: str) -> bool:
