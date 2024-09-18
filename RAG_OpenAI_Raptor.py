@@ -22,14 +22,14 @@ os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings(model="text-embedding-3-small")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
-file_path = "RAG Dataset/full_text_Pediatric_Plastic_Surgery.json"
+file_path = "RAG Dataset/full_text_Hand_Surgery.json"
 if not os.path.isfile(file_path):
     url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
     gdown.download_folder(url)
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)
-index_name = "pediatric-plastic-surgery"
+index_name = "hand-surgery"
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
