@@ -383,8 +383,8 @@ if not disable_chat:
                 docs = retriever.get_relevant_documents(prompt)
                 with st.expander("See Context"):
                     for doc in docs:
-                        st.write(data[doc.page_content])
-                        file_path = doc.page_content
+                        st.write(data[doc.metadata['paper_id']])
+                        file_path = doc.metadata['paper_id']
                         if file_path:
                             st.markdown(f"**File ID:** `{file_path}`")
                         else: 
