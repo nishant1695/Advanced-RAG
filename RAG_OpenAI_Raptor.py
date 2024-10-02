@@ -109,8 +109,8 @@ def setup_language_model_chain(vectorstore: PineconeVectorStore, topk: int):
     def format_docs(docs):
         with open(file_path, 'r') as file:
             data = json.load(file)
-        print([doc.page_content for doc in docs])
-        return "\n\n".join(data[doc.page_content] for doc in docs)
+        print([doc.metadata['paper_id'] for doc in docs])
+        return "\n\n".join(data[doc.metadata['paper_id']] for doc in docs)
 
     rag_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
