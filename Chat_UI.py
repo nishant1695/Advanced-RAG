@@ -33,7 +33,8 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
 
-file_path = "RAG Dataset/full_text_Pediatric_Plastic_Surgery.json"
+#file_path = "RAG Dataset/full_text_Pediatric_Plastic_Surgery.json"
+file_path = st.secrets["FILE_NAME"]
 if not os.path.isfile(file_path):
     url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
     gdown.download_folder(url)
