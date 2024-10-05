@@ -43,7 +43,7 @@ with open(file_path, 'r') as file:
 
 # Initialize Pinecone
 pinecone = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
-index_name = "pediatric-plastic-surgery"
+index_name = st.secrets["INDEX_NAME"]
 print("Name is: ",index_name)
 
 def validate_openai_api_key(api_key: str) -> bool:
