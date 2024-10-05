@@ -29,7 +29,7 @@ if not os.path.isfile(file_path):
 # Initialize Pinecone
 pc_api = st.secrets["PINECONE_API_KEY"]
 pinecone = Pinecone(api_key=pc_api)
-index_name = "pediatric-plastic-surgery"
+index_name = st.secrets["INDEX_NAME"]
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
