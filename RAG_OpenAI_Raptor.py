@@ -22,7 +22,8 @@ os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final
 embd = OpenAIEmbeddings(model="text-embedding-3-small")
 model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
 
-file_path = "RAG Dataset/full_text_Pediatric_Plastic_Surgery.json"
+#file_path = "RAG Dataset/full_text_Pediatric_Plastic_Surgery.json"
+file_path = st.secrets["FILE_NAME"]
 if not os.path.isfile(file_path):
     url = "https://drive.google.com/drive/u/1/folders/1T97A9FRfmSUddOdreMbKG2qfMaeGNLa8"
     gdown.download_folder(url)
