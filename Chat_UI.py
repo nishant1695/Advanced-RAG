@@ -14,7 +14,8 @@ from langchain_text_splitters import CharacterTextSplitter
 from dotenv import load_dotenv
 load_dotenv()
 from langchain.vectorstores import Pinecone
-from langchain_pinecone import PineconeVectorStore
+#from langchain_pinecone import PineconeVectorStore
+from langchain_pinecone.vectorstores import PineconeVectorStore
 from pinecone import Pinecone
 import gdown
 
