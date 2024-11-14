@@ -16,5 +16,5 @@ streamlit
 pysqlite3-binary
 document
 pinecone
-langchain_pinecone
+langchain_pinecone==0.2.1
 gdown
