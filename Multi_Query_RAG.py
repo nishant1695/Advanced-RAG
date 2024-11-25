@@ -26,7 +26,7 @@ os.environ['LANGCHAIN_PROJECT']= st.secrets["langsmith_project"]
 
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final  # Ensure this is set securely
 embd = OpenAIEmbeddings()
-model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+model = ChatOpenAI(temperature=1, model="o1-preview")
 
 def process_documents(source_directory: str, ignored_files: List[str] = []) -> List[str]:
     print("="*30)
@@ -56,7 +56,7 @@ def build_vectorstore_with_summaries(texts: List[str], n_levels: int = 3) -> Chr
 def setup_ollama_language_model_chain(vectorstore: Chroma, LLM_name: str, topk: int):
     print(">>>chaining model:", LLM_name)
     retriever = vectorstore.as_retriever(search_kwargs={"k": topk})
-    llm = ChatOllama(model=LLM_name, temperature=0)
+    llm = ChatOllama(model=LLM_name, temperature=1)
     template = """
                 Answer the question comprehensively and with detailed logical points based on the following context:
                 {context}
@@ -93,7 +93,7 @@ prompt_perspectives = ChatPromptTemplate.from_template(template_mq)
 
 generate_queries = (
     prompt_perspectives 
-    | ChatOpenAI(temperature=0) 
+    | ChatOpenAI(temperature=1, model="o1-preview") 
     | StrOutputParser() 
     | (lambda x: x.split("\n"))
 )
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
     # Define the embedding function
     embd = OpenAIEmbeddings()
-    model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+    model = ChatOpenAI(temperature=1, model="o1-preview")
     source_directory = os.environ.get('SOURCE_DIRECTORY', 'Melanoma_Papers')
     vectorstore_path = os.environ.get('VECTORSTORE_PATH', 'Vec_Store')
 

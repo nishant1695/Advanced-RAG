@@ -51,7 +51,7 @@ with st.sidebar:
                 print("API Key is: ",st.session_state.api_key_final)
                 os.environ['OPENAI_API_KEY'] = api_key
                 embd = OpenAIEmbeddings(openai_api_key=api_key)
-                model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-4o-mini")
+                model = OpenAI(streaming=True, callbacks=[StreamingStdOutCallbackHandler()],temperature=1, model="o1-preview")
             else:
                 st.sidebar.error('Invalid API key!', icon='⚠️')
                 st.stop()

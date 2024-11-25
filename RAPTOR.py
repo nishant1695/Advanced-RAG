@@ -24,7 +24,7 @@ from langchain_openai import ChatOpenAI
 # os.environ[] =  # OpenAI API Key
 os.environ['OPENAI_API_KEY'] = st.session_state.api_key_final # OpenAI API Key
 embd = OpenAIEmbeddings()
-model = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+model = ChatOpenAI(temperature=1, model="o1-preview")
 
 def global_cluster_embeddings(
     embeddings: np.ndarray,
